@@ -195,7 +195,10 @@ use self::darwin::fill as fill_impl;
 #[cfg(any(target_os = "fuchsia"))]
 use self::fuchsia::fill as fill_impl;
 
-#[cfg(any(target_os = "android", target_os = "linux"))]
+#[cfg(target_os = "optee")]
+use self::gp_tee::fill as fill_impl;
+
+#[cfg(any(target_os = "android", target_os = "linux", not(target_os="optee")))]
 mod sysrand_chunk {
     use crate::{c, error};
 
@@ -319,6 +322,7 @@ mod sysrand {
 // Keep the `cfg` conditions in sync with the conditions in lib.rs.
 #[cfg(all(
     any(target_os = "android", target_os = "linux"),
+    not(target_os = "optee"),
     feature = "dev_urandom_fallback"
 ))]
 mod sysrand_or_urandom {
@@ -429,5 +433,14 @@ mod fuchsia {
     #[link(name = "zircon")]
     extern "C" {
         fn zx_cprng_draw(buffer: *mut u8, length: usize);
+    }
+}
+
+#[cfg(target_os = "optee")]
+mod gp_tee {
+    use crate::error;
+    pub fn fill(dest: &mut [u8]) -> Result<(), error::Unspecified> {
+        optee_utee::Random::generate(dest);
+        Ok(())
     }
 }

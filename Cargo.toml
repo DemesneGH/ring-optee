@@ -319,6 +319,9 @@ web-sys = { version = "0.3.37", default-features = false, features = ["Crypto", 
 [target.'cfg(target_os = "windows")'.dependencies]
 winapi = { version = "0.3.8", default-features = false, features = ["ntsecapi", "wtypesbase"] }
 
+[target.'cfg(target_os="optee")'.dependencies]
+optee-utee = { git = "https://github.com/apache/incubator-teaclave-trustzone-sdk.git" }
+
 [target.'cfg(target_arch = "wasm32")'.dev-dependencies]
 wasm-bindgen-test = { version = "0.3.18", default-features = false }
 

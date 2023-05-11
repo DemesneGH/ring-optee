@@ -73,6 +73,9 @@
 #![forbid(unused_results)]
 #![no_std]
 
+#[cfg(all(target_arch = "aarch64", not(target_os="optee")))]
+extern crate libc;
+
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
